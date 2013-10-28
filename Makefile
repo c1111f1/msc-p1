@@ -1,0 +1,40 @@
+#Make file for MSc project - Real Time Video Communication
+#Fei Cheng
+#28Th 10 2013
+#XJTLU
+
+#Flags
+CC = gcc
+CFLAGS = -Wall -Werror -Wcast-align -g
+LDFLAGS =
+LIBS_C = `pkg-config --cflags sdl`
+LIBS = `pkg-config --libs sdl`
+
+#PATH
+SRC_PATH = code/
+LIB_PATH = lib/
+BIN_PATH = bin/
+OBJ_PATH = obj/
+
+SWCOBJECT = $(OBJ_PATH)swc.o $(OBJ_PATH)opt.o $(OBJ_PATH)video.o $(OBJ_PATH)screen.o
+
+all: $(BIN_PATH)swc
+
+$(BIN_PATH)swc: $(SWCOBJECT)
+	$(CC) $(LDFLAGS) $(SWCOBJECT) -o $@ $(LIBS)
+
+$(OBJ_PATH)swc.o: $(SRC_PATH)swc.c
+	$(CC) $(CFLAGS) -c $< $(LIBS_C) -o $@
+
+$(OBJ_PATH)opt.o: $(SRC_PATH)opt.c $(SRC_PATH)opt.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_PATH)video.o: $(SRC_PATH)video.c $(SRC_PATH)video.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_PATH)screen.o: $(SRC_PATH)screen.c $(SRC_PATH)screen.h
+	$(CC) $(CFLAGS)  -c $< $(LIBS_C) -o $@
+clean:
+	rm -f $(OBJ_PATH)*.o $(BIN_PATH)swc
+
+.PHONY: all clean
