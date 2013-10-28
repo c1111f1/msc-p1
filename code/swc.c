@@ -1,3 +1,8 @@
+/*
+Master project of XJTLU
+Fei Cheng
+*/
+
 #include <stdlib.h>
 #include "opt.h"
 #include "video.h"
