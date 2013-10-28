@@ -183,7 +183,7 @@ void
 screen_mainloop()
 {
   int i;
-  FID = fopen("im.txt","w");
+  FID = fopen("data/im.txt","w");
   for (i = 0; screen.running && i <= video.buffer.req.count; i++) {
     frame_num ++ ;
     printf("%d\n", frame_num);
