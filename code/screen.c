@@ -84,7 +84,7 @@ update_rgb_pixels(const void *start)
   int x, y;
   int p1, p2, p3, p4;
 
-  //Save YUYV file to disk
+  //Save YUYV file to disk HH
   
   IFRANGE
   {
