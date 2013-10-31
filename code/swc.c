@@ -1,7 +1,7 @@
 /*
 Master project of XJTLU
 Fei Cheng
-2013/10/28
+2013/10/31
 */
 
 #include <stdlib.h>
