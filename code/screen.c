@@ -4,7 +4,8 @@
 #include "screen.h"
 #include "opt.h"
 #include "video.h"
-
+#include "x264.h"
+#include "x264_encoder.h"
 unsigned int frame_num = 0;
 
 extern struct options opt;
@@ -88,7 +89,8 @@ update_rgb_pixels(const void *start)
   
   IFRANGE
   {
-    fwrite(data, height * width * 2,1,FID);  
+    fwrite(data, height * width * 2,1,FID);
+    encode_one_frame(data);
   }
   
   for (y = 0; y < height; y++) {
