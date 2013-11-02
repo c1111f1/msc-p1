@@ -12,7 +12,7 @@ Fei Cheng
 #include "x264_encoder.h"
 
 //File names of input and output file
-char g_X264File[100] = "output.264";
+char g_X264File[100] = "data/output.264";
 char g_YUVFile[100] = "input.yuv";
 //File pointer
 FILE *H264_FP;
@@ -28,13 +28,13 @@ uint8_t *YUVframe = NULL;
 void init_file() 
 {
 	H264_FP = fopen(g_X264File, "w");
-	YUV_FP = fopen(g_YUVFile, "rb");
+	//YUV_FP = fopen(g_YUVFile, "rb");
 }
 
 void close_file() 
 {
 	fclose(H264_FP);
-	fclose(YUV_FP);
+	//fclose(YUV_FP);
 }
 
 void encode_init(Encoder *encoder, int img_width, int img_height)
