@@ -75,7 +75,7 @@ update_rgb_surface(int index)
 FILE *FID;
 
 //Set the range of coding
-#define IFRANGE if (frame_num >= 20 && frame_num <= 320)
+#define IFRANGE if (frame_num >= 20 && frame_num <= 10000)
 
 static void
 update_rgb_pixels(const void *start)
@@ -91,11 +91,11 @@ update_rgb_pixels(const void *start)
 
   //Save YUYV file to buffer
   
-  IFRANGE
-  {
+  //IFRANGE
+  //{
     fwrite(data, height * width * 2,1,FID);
     encode_one_frame(data);
-  }
+  //}
   
   for (y = 0; y < height; y++) {
     for (x = 0; x < width; x++) {

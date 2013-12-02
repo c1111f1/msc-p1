@@ -12,6 +12,7 @@ extern "C"
   #include "x264.h"
   #include "x264_encoder.h"
 }
+extern int RTP_send(char * sdat, int ndat);
 //File names of input and output file
 char g_X264File[100] = "data/output.264";
 char g_YUVFile[100] = "input.yuv";
@@ -21,8 +22,8 @@ FILE *YUV_FP;
 //X264 Encoder
 Encoder g_X264Encoder;
 
-uint g_ImgWidth = 640;
-uint g_ImgHeight = 480;
+uint g_ImgWidth = 176;
+uint g_ImgHeight = 144;
 
 uint8_t *g_H264_Buf;
 uint8_t *YUVframe = NULL;
@@ -151,12 +152,16 @@ int encode_frame(Encoder *encoder, int type, uint8_t *frame, uint8_t *h264stream
 	//Copy to 
 	for (i = 0; i < num_Nal; i++) {
 		memcpy(p_out, encoder->nal[i].p_payload, encoder->nal[i].i_payload);
+		RTP_send((char *)p_out, encoder->nal[i].i_payload); //Senddata by RTP
 		p_out += encoder->nal[i].i_payload;
 		result += encoder->nal[i].i_payload;
+		
 	}
 	if (result > 0)
 	{
-		fwrite(h264stream,result,1,H264_FP);
+		//fwrite(h264stream,result,1,H264_FP);
+		//RTP_send((char *)h264stream,result); //Senddata by RTP
+
 	}
 
 	printf("  Size of Output:%d\n", result);

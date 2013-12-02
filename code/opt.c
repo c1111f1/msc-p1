@@ -22,8 +22,8 @@ void
 options_init()
 {
   opt.verbose = 0;
-  opt.width = 640;
-  opt.height = 480;
+  opt.width = 176;
+  opt.height = 144;
 }
 
 void

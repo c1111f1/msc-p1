@@ -21,11 +21,15 @@
 
 using namespace jrtplib;
 
+RTPSession sess;
+
 //
 // This function checks if there was a RTP error. If so, it displays an error
 // message and exists.
 //
-int cppsend(void);
+int RTP_init();
+int RTP_send(unsigned char * sdat, int ndat);
+int RTP_end();
 
 void checkerror(int rtperr)
 {
@@ -39,22 +43,20 @@ void checkerror(int rtperr)
 //
 // The main routine
 //
-int cppsend(void)
+
+int RTP_init()
 {
-	printf("Cpp\n");
 #ifdef WIN32
 	WSADATA dat;
 	WSAStartup(MAKEWORD(2,2),&dat);
 #endif // WIN32
-	
-	RTPSession sess;
 	uint16_t portbase,destport;
 	uint32_t destip;
 	std::string ipstr;
 	int status,i,num;
 
         // First, we'll ask for the necessary information
-		
+	//SetMaximumPacketSize
 	std::cout << "Enter local portbase:" << std::endl;
 	std::cin >> portbase;
 	std::cout << std::endl;
@@ -77,9 +79,6 @@ int cppsend(void)
 	std::cin >> destport;
 	
 	std::cout << std::endl;
-	std::cout << "Number of packets you wish to be sent:" << std::endl;
-	std::cin >> num;
-	
 	// Now, we'll create a RTP session, set the destination, send some
 	// packets and poll for incoming data.
 	
@@ -95,57 +94,37 @@ int cppsend(void)
 	sessparams.SetAcceptOwnPackets(true);
 	transparams.SetPortbase(portbase);
 	status = sess.Create(sessparams,&transparams);	
+	sess.SetMaximumPacketSize(20480);
 	checkerror(status);
 	
 	RTPIPv4Address addr(destip,destport);
 	
 	status = sess.AddDestination(addr);
 	checkerror(status);
-	
-	for (i = 1 ; i <= num ; i++)
-	{
-		printf("\nSending packet %d/%d\n",i,num);
-		
-		// send the packet
-		status = sess.SendPacket((void *)"1234567890",10,0,false,1);
-		checkerror(status);
-		
-		sess.BeginDataAccess();
-		
-		// check incoming packets
-		if (sess.GotoFirstSourceWithData())
-		{
-			do
-			{
-				RTPPacket *pack;
-				
-				while ((pack = sess.GetNextPacket()) != NULL)
-				{
-					// You can examine the data here
-					printf("Got packet !\n");
-					
-					// we don't longer need the packet, so
-					// we'll delete it
-					sess.DeletePacket(pack);
-				}
-			} while (sess.GotoNextSourceWithData());
-		}
-		
-		sess.EndDataAccess();
+	return 1;
+}
+
+int RTP_send(char * sdat, int ndat)
+{
+	int status,i,num;
+	// send the packet
+	status = sess.SendPacket((void *)sdat,ndat,96,false,1);
+	checkerror(status);
 
 #ifndef RTP_SUPPORT_THREAD
 		status = sess.Poll();
 		checkerror(status);
 #endif // RTP_SUPPORT_THREAD
-		
-		RTPTime::Wait(RTPTime(0,100));
-	}
-	
+	return 1;
+}
+
+int RTP_end()
+{
 	sess.BYEDestroy(RTPTime(10,0),0,0);
 
 #ifdef WIN32
 	WSACleanup();
 #endif // WIN32
-	return 0;
+	return 1;
 }
 

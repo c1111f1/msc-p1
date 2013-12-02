@@ -6,7 +6,7 @@
 #LIBS_C = -lm -lpthread -ldl -I/home/fred/jrtplib-3.9.1/src
 #LIBS = `pkg-config --libs sdl` -lx264 -lm -lpthread -ldl 
 
-PLATFORM = PC
+#PLATFORM = PC
 
 #Flags
 CC = g++
@@ -21,7 +21,7 @@ LIBS = -lSDL -lx264 -lm -lpthread -ljrtp -ljthread  -ldl
 SRC_PATH = code/
 BIN_PATH = bin/
 OBJ_PATH = obj/
-DEP_LIBS = -L./libpc
+DEP_LIBS = -L./libarm
 
 SWCOBJECT = $(OBJ_PATH)swc.o $(OBJ_PATH)opt.o $(OBJ_PATH)video.o $(OBJ_PATH)screen.o $(OBJ_PATH)x264_encoder.o $(OBJ_PATH)rtp.o 
 

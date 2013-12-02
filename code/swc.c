@@ -16,12 +16,14 @@ extern "C"
 }
 extern int frame_num;
 
-extern int cppsend();
+extern int RTP_init();
+extern int RTP_send(unsigned char * sdat, int ndat);
+extern int RTP_end();
 
 int
 main(int argc, char *argv[])
 {
-  cppsend();
+  RTP_init();
   options_init();
   options_deal(argc, argv);
   video_init();
@@ -33,5 +35,6 @@ main(int argc, char *argv[])
   X264_end();
   screen_quit();
   video_quit();
+  RTP_end();
   exit(EXIT_SUCCESS);
 }
