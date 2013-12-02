@@ -6,22 +6,34 @@
 #LIBS_C = -lm -lpthread -ldl -I/home/fred/jrtplib-3.9.1/src
 #LIBS = `pkg-config --libs sdl` -lx264 -lm -lpthread -ldl 
 
-#PLATFORM = PC
+PLATFORM = ARM
 
 #Flags
-CC = g++
-#CC = arm-linux-gnueabihf-g++
+
+ifeq ($(PLATFORM),ARM)
+	CC = arm-linux-gnueabihf-g++
+else
+	CC = g++
+endif
+
 CFLAGS = -pipe -O2 
 LDFLAGS = -pipe -O2 
-LIBS_C = -I/usr/include/SDL -I./code/rtp -lx264 -lm -lpthread -ldl 
-LIBS = -lSDL -lx264 -lm -lpthread -ljrtp -ljthread  -ldl
+LIBS_C = -I./code/rtp -lx264 -lm -lpthread -ldl 
+#LIBS = -lSDL -lx264 -lm -lpthread -ljrtp -ljthread  -ldl
+LIBS = -lx264 -lm -lpthread -ljrtp -ljthread  -ldl
 #`pkg-config --libs sdl`
 
 #PATH
 SRC_PATH = code/
 BIN_PATH = bin/
 OBJ_PATH = obj/
-DEP_LIBS = -L./libarm
+
+ifeq ($(PLATFORM),ARM)
+	DEP_LIBS = -L./libarm
+else
+	DEP_LIBS = -L./libpc
+endif
+
 
 SWCOBJECT = $(OBJ_PATH)swc.o $(OBJ_PATH)opt.o $(OBJ_PATH)video.o $(OBJ_PATH)screen.o $(OBJ_PATH)x264_encoder.o $(OBJ_PATH)rtp.o 
 

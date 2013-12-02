@@ -11,11 +11,11 @@ extern "C"
   #include "opt.h"
   #include "video.h"
   #include "screen.h"
+  #include <stdint.h>
   #include "x264.h"
   #include "x264_encoder.h"
 }
 extern int frame_num;
-
 extern int RTP_init();
 extern int RTP_send(unsigned char * sdat, int ndat);
 extern int RTP_end();
@@ -27,13 +27,11 @@ main(int argc, char *argv[])
   options_init();
   options_deal(argc, argv);
   video_init();
-  screen_init();
   X264_init();
   printf("Begin\n");
   screen_mainloop();
   printf("%d Exit\n",frame_num);
   X264_end();
-  screen_quit();
   video_quit();
   RTP_end();
   exit(EXIT_SUCCESS);
