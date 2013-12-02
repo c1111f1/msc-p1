@@ -1,7 +1,7 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#include <SDL.h>
+#include "SDL.h"
 
 struct rgb_surface {
   SDL_Surface *surface;

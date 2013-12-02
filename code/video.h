@@ -2,11 +2,12 @@
 #define VIDEO_H
 
 #include <linux/videodev2.h>
+ 
 
 struct buffer {
   struct v4l2_requestbuffers req; // 请求/
   struct v4l2_buffer query;      // 获取/
-  struct {              // 缓冲/
+  struct buftype{              // 缓冲/
     void *start;
     size_t length;
   } *buf;

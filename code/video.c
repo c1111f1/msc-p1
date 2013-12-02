@@ -9,9 +9,15 @@
 #include <unistd.h>
 #include <errno.h>
 #include <assert.h>
-#include "video.h"
-#include "opt.h"
-
+extern "C"
+{
+  #include "video.h"
+  #include "opt.h"
+}extern "C"
+{
+  #include "video.h"
+  #include "opt.h"
+}
 #define BUFFER_NUM 5
 
 static int stream_flag = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -61,10 +67,14 @@ static void
 video_set_format()
 {
   memset(&video.format, 0, sizeof(video.format));
-  video.format.type = stream_flag;
+  video.format.type = (v4l2_buf_type)stream_flag;
   video.format.fmt.pix.width = opt.width;
   video.format.fmt.pix.height = opt.height;
   video.format.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+
+  //video.format.parm.capture.timeperframe.numerator = 1;
+  //video.format.parm.capture.timeperframe.denominator = 30;
+
   if (ioctl(video.fd, VIDIOC_S_FMT, &video.format) == -1) {
     perror("VIDIOC_S_FORMAT");
     exit(EXIT_FAILURE);
@@ -111,8 +121,7 @@ buffer_init()
   }
 }
 
-static void
-buffer_free()
+static void buffer_free()
 {
   int i;
 
@@ -122,12 +131,12 @@ buffer_free()
   free(video.buffer.buf);
 }
 
-static void
-buffer_request()
+static void buffer_request()
 {
+  int sizenum = 0;
 
   memset(&video.buffer.req, 0, sizeof(video.buffer.req));
-  video.buffer.req.type = stream_flag;
+  video.buffer.req.type = (v4l2_buf_type)stream_flag;
   video.buffer.req.memory = V4L2_MEMORY_MMAP;
   video.buffer.req.count = BUFFER_NUM;
   /* 设置视频帧缓冲规格 */
@@ -144,8 +153,8 @@ buffer_request()
     perror("no enough buffer");
     exit(EXIT_FAILURE);
   }
-  video.buffer.buf = calloc(video.buffer.req.count,
-                sizeof(*video.buffer.buf));
+  sizenum = sizeof(*video.buffer.buf);
+  video.buffer.buf = (buffer::buftype*)calloc(video.buffer.req.count, sizenum);
   assert(video.buffer.buf != NULL);
 }
 
@@ -218,3 +227,5 @@ buffer_dequeue(int index)
       exit(EXIT_FAILURE);
     }
 }
+
+

@@ -7,10 +7,11 @@ Fei Cheng
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-
-#include "x264.h"
-#include "x264_encoder.h"
-
+extern "C"
+{
+  #include "x264.h"
+  #include "x264_encoder.h"
+}
 //File names of input and output file
 char g_X264File[100] = "data/output.264";
 char g_YUVFile[100] = "input.yuv";
@@ -158,7 +159,7 @@ int encode_frame(Encoder *encoder, int type, uint8_t *frame, uint8_t *h264stream
 		fwrite(h264stream,result,1,H264_FP);
 	}
 
-	printf("%d\n", result);
+	printf("  Size of Output:%d\n", result);
 	return 0;
 }
 

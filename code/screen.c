@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "screen.h"
-#include "opt.h"
-#include "video.h"
-#include "x264.h"
-#include "x264_encoder.h"
+extern "C"
+{
+  #include "screen.h"
+  #include "opt.h"
+  #include "video.h"
+  #include "x264.h"
+  #include "x264_encoder.h"
+}
+
 unsigned int frame_num = 0;
 
 extern struct options opt;
@@ -31,7 +35,7 @@ sdl_init()
     perror("SDL_Init");
     exit(EXIT_FAILURE);
   }
-  SDL_WM_SetCaption("Simple WebCam", NULL);
+  SDL_WM_SetCaption("Video Sampling and Display - MSC-P01", NULL);
   atexit(SDL_Quit);
 }
 
@@ -71,7 +75,7 @@ update_rgb_surface(int index)
 FILE *FID;
 
 //Set the range of coding
-#define IFRANGE if (frame_num >= 20 && frame_num <= 120)
+#define IFRANGE if (frame_num >= 20 && frame_num <= 320)
 
 static void
 update_rgb_pixels(const void *start)
@@ -188,7 +192,7 @@ screen_mainloop()
   FID = fopen("data/im.txt","w");
   for (i = 0; screen.running && i <= video.buffer.req.count; i++) {
     frame_num ++ ;
-    printf("%d\n", frame_num);
+    printf("Current Frame Number :%d\n", frame_num);
     if (i == video.buffer.req.count) {
       i = 0;
     }

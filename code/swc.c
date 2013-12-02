@@ -5,18 +5,23 @@ Fei Cheng
 */
 
 #include <stdlib.h>
-#include "opt.h"
-#include "video.h"
-#include "screen.h"
 #include <stdio.h>
-#include "x264.h"
-
-#include "x264_encoder.h"
+extern "C"
+{
+  #include "opt.h"
+  #include "video.h"
+  #include "screen.h"
+  #include "x264.h"
+  #include "x264_encoder.h"
+}
 extern int frame_num;
+
+extern int cppsend();
 
 int
 main(int argc, char *argv[])
 {
+  cppsend();
   options_init();
   options_deal(argc, argv);
   video_init();
