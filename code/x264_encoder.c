@@ -7,11 +7,18 @@ Fei Cheng
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+
+
 extern "C"
 {
   #include "x264.h"
+  #include "opt.h"
   #include "x264_encoder.h"
 }
+extern struct options opt;
+
+extern unsigned int frame_num, NAL_num, Frame_Size;
+
 extern int RTP_send(char * sdat, int ndat);
 //File names of input and output file
 char g_X264File[100] = "data/output.264";
@@ -22,8 +29,8 @@ FILE *YUV_FP;
 //X264 Encoder
 Encoder g_X264Encoder;
 
-uint g_ImgWidth = 176;
-uint g_ImgHeight = 144;
+uint g_ImgWidth;
+uint g_ImgHeight;
 
 uint8_t *g_H264_Buf;
 uint8_t *YUVframe = NULL;
@@ -49,7 +56,7 @@ void encode_init(Encoder *encoder, int img_width, int img_height)
 	encoder->param->i_width = img_width; //set frame width
 	encoder->param->i_height = img_height; //set frame height
 	encoder->param->rc.i_lookahead = 0; //表示i帧向前缓冲区
-	encoder->param->i_fps_num = 30; //帧率分子
+	encoder->param->i_fps_num = 25; //帧率分子
 	encoder->param->i_fps_den = 1; //帧率分母
 	encoder->param->rc.i_lookahead = 0;
 	encoder->param->i_sync_lookahead = 0;
@@ -148,7 +155,7 @@ int encode_frame(Encoder *encoder, int type, uint8_t *frame, uint8_t *h264stream
 	{
 		return -1;
 	}
-	
+	NAL_num = num_Nal;
 	//Copy to 
 	for (i = 0; i < num_Nal; i++) {
 		memcpy(p_out, encoder->nal[i].p_payload, encoder->nal[i].i_payload);
@@ -163,8 +170,8 @@ int encode_frame(Encoder *encoder, int type, uint8_t *frame, uint8_t *h264stream
 		//RTP_send((char *)h264stream,result); //Senddata by RTP
 
 	}
-
-	printf("  Size of Output:%d\n", result);
+	Frame_Size = result;
+	//printf("  Size of Output:%d\n", result);
 	return 0;
 }
 
@@ -187,6 +194,8 @@ void encoder_end(Encoder *encoder) {
 
 void X264_init()
 {
+	g_ImgWidth = opt.width;
+    g_ImgHeight = opt.height;
 	YUVframe = (uint8_t *) malloc(sizeof(uint8_t) * g_ImgWidth * g_ImgHeight * 2);
 	encode_init(&g_X264Encoder, g_ImgWidth, g_ImgHeight);
 	init_file();

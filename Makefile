@@ -16,11 +16,26 @@ else
 	CC = g++
 endif
 
+DIR=$(shell pwd)
+INCS = -I.\
+       -I$(DIR) \
+       -I$(DIR)/hardware \
+       -I$(DIR)/hardware/arduino \
+       -I$(DIR)/hardware/arduino/cores \
+       -I$(DIR)/hardware/arduino/cores/arduino \
+       -I$(DIR)/hardware/arduino/variants \
+       -I$(DIR)/hardware/arduino/variants/sunxi \
+       -I$(DIR)/libraries \
+       -I$(DIR)/libraries/Serial \
+       -I$(DIR)/libraries/SPI \
+	-I$(DIR)/libraries/Wire \
+	-I$(DIR)/libraries/LiquidCrystal 
+
 CFLAGS = -pipe -O2 
 LDFLAGS = -pipe -O2 
 LIBS_C = -I./code/rtp -lx264 -lm -lpthread -ldl 
 #LIBS = -lSDL -lx264 -lm -lpthread -ljrtp -ljthread  -ldl
-LIBS = -lx264 -lm -lpthread -ljrtp -ljthread  -ldl
+LIBS = -lx264 -lm -lpthread -ljrtp -ljthread  -ldl -larduino
 #`pkg-config --libs sdl`
 
 #PATH
@@ -43,7 +58,7 @@ $(BIN_PATH)swc: $(SWCOBJECT)
 	$(CC) $(LDFLAGS) $(SWCOBJECT) -o $@ $(LIBS) $(DEP_LIBS)
 
 $(OBJ_PATH)swc.o: $(SRC_PATH)swc.c $(SRC_PATH)x264.h
-	$(CC) $(CFLAGS) -c $< $(LIBS_C) -o $@
+	$(CC) $(CFLAGS) -c $< $(LIBS_C) $(INCS) -o $@
 
 $(OBJ_PATH)opt.o: $(SRC_PATH)opt.c $(SRC_PATH)opt.h
 	$(CC) $(CFLAGS) -c $< -o $@

@@ -46,6 +46,7 @@ void checkerror(int rtperr)
 
 int RTP_init()
 {
+	char if_default;
 #ifdef WIN32
 	WSADATA dat;
 	WSAStartup(MAKEWORD(2,2),&dat);
@@ -54,15 +55,27 @@ int RTP_init()
 	uint32_t destip;
 	std::string ipstr;
 	int status,i,num;
-
-        // First, we'll ask for the necessary information
-	//SetMaximumPacketSize
-	std::cout << "Enter local portbase:" << std::endl;
-	std::cin >> portbase;
-	std::cout << std::endl;
+	printf("Use default IP and port? (192.168.1.100:4444)\n");
+	if_default = getchar();
+	if (if_default == 'y')
+	{
+		portbase=4444;
+		ipstr = "192.168.1.100";
+		destport = 4444;
+	}
+	else
+	{
+		std::cout << "Enter local portbase:" << std::endl;
+		std::cin >> portbase;
+		std::cout << std::endl;
+		std::cout << "Enter the destination IP address" << std::endl;
+		std::cin >> ipstr;
+		std::cout << std::endl;
+		std::cout << "Enter the destination port" << std::endl;
+		std::cin >> destport;
+		std::cout << std::endl;
+	}
 	
-	std::cout << "Enter the destination IP address" << std::endl;
-	std::cin >> ipstr;
 	destip = inet_addr(ipstr.c_str());
 	if (destip == INADDR_NONE)
 	{
@@ -75,8 +88,7 @@ int RTP_init()
 	// ntohl
 	destip = ntohl(destip);
 	
-	std::cout << "Enter the destination port" << std::endl;
-	std::cin >> destport;
+
 	
 	std::cout << std::endl;
 	// Now, we'll create a RTP session, set the destination, send some

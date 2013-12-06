@@ -66,19 +66,38 @@ video_close()
 static void
 video_set_format()
 {
+  struct v4l2_streamparm *parm = new struct v4l2_streamparm;
+  memset(parm,0,sizeof(struct v4l2_streamparm));
   memset(&video.format, 0, sizeof(video.format));
+
   video.format.type = (v4l2_buf_type)stream_flag;
   video.format.fmt.pix.width = opt.width;
   video.format.fmt.pix.height = opt.height;
   video.format.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
 
-  //video.format.parm.capture.timeperframe.numerator = 1;
-  //video.format.parm.capture.timeperframe.denominator = 30;
+  parm->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+  parm->parm.capture.capturemode = V4L2_MODE_HIGHQUALITY;     
+  parm->parm.capture.capability = V4L2_CAP_TIMEPERFRAME;
+  parm->parm.output.outputmode = V4L2_MODE_HIGHQUALITY;     
+  parm->parm.output.capability = V4L2_CAP_TIMEPERFRAME;
+  parm->parm.capture.timeperframe.denominator = 25 ;//时间间隔分母
+  parm->parm.capture.timeperframe.numerator = 1;//分子
 
-  if (ioctl(video.fd, VIDIOC_S_FMT, &video.format) == -1) {
+
+  if(-1 == ioctl(video.fd,VIDIOC_S_PARM,parm))
+  {
+    perror("set param:");
+    exit(EXIT_FAILURE);
+  }
+  if (ioctl(video.fd, VIDIOC_S_FMT, &video.format) == -1) 
+  {
     perror("VIDIOC_S_FORMAT");
     exit(EXIT_FAILURE);
   }
+
+  ioctl(video.fd,VIDIOC_S_PARM,parm);
+  printf("%3.2f\n", parm->parm.capture.timeperframe.denominator/(float)parm->parm.capture.timeperframe.numerator);
+  getchar();
 }
 
 static void
