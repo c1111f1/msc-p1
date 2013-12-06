@@ -8,12 +8,12 @@
 
 PLATFORM = ARM
 
-#Flags
-
 ifeq ($(PLATFORM),ARM)
 	CC = arm-linux-gnueabihf-g++
+	EXN = ht_ard
 else
 	CC = g++
+	EXN = ht_pc
 endif
 
 DIR=$(shell pwd)
@@ -35,7 +35,6 @@ CFLAGS = -pipe -O2
 LDFLAGS = -pipe -O2 
 LIBS_C = -I./code/rtp -lx264 -lm -lpthread -ldl 
 #LIBS = -lSDL -lx264 -lm -lpthread -ljrtp -ljthread  -ldl
-LIBS = -lx264 -lm -lpthread -ljrtp -ljthread  -ldl -larduino
 #`pkg-config --libs sdl`
 
 #PATH
@@ -44,20 +43,32 @@ BIN_PATH = bin/
 OBJ_PATH = obj/
 
 ifeq ($(PLATFORM),ARM)
+	LIBS = -lx264 -lm -lpthread -ljrtp -ljthread  -ldl -larduino
 	DEP_LIBS = -L./libarm
 else
+	LIBS = -lx264 -lm -lpthread -ljrtp -ljthread  -ldl
 	DEP_LIBS = -L./libpc
 endif
 
 
 SWCOBJECT = $(OBJ_PATH)swc.o $(OBJ_PATH)opt.o $(OBJ_PATH)video.o $(OBJ_PATH)screen.o $(OBJ_PATH)x264_encoder.o $(OBJ_PATH)rtp.o 
 
-all: $(BIN_PATH)swc
+all: $(BIN_PATH)$(EXN)
 
-$(BIN_PATH)swc: $(SWCOBJECT)
+$(BIN_PATH)$(EXN): $(SWCOBJECT)
 	$(CC) $(LDFLAGS) $(SWCOBJECT) -o $@ $(LIBS) $(DEP_LIBS)
-
+ifeq ($(PLATFORM),ARM)
+	scp bin/$(EXN) ubuntu@192.168.1.106:~/ht_ard2
+endif
+	
 $(OBJ_PATH)swc.o: $(SRC_PATH)swc.c $(SRC_PATH)x264.h
+
+ifeq ($(PLATFORM),ARM)
+	@echo '#define _ARM' > code/platform.h
+else
+	@echo '#define _PC' > code/platform.h
+endif
+
 	$(CC) $(CFLAGS) -c $< $(LIBS_C) $(INCS) -o $@
 
 $(OBJ_PATH)opt.o: $(SRC_PATH)opt.c $(SRC_PATH)opt.h

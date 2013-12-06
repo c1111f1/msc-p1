@@ -1,6 +1,7 @@
 #ifndef OPT_H
 #define OPT_H
 
+
 struct options {
   int verbose;
   int width;

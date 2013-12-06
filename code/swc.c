@@ -16,20 +16,25 @@ extern "C"
   #include <stdint.h>
   #include "x264.h"
   #include "x264_encoder.h"
+  #include "platform.h"
 }
 extern int frame_num;
 extern int RTP_init();
 extern int RTP_send(unsigned char * sdat, int ndat);
 extern int RTP_end();
 
+#ifdef _ARM
 void uart_init();
 float * get_uart();
+#endif
 
 int
 main(int argc, char *argv[])
 {
+#ifdef _ARM
   uart_init();
   get_uart();
+#endif
   RTP_init();
   options_init();
   options_deal(argc, argv);
@@ -44,7 +49,7 @@ main(int argc, char *argv[])
   exit(EXIT_SUCCESS);
 }
 
-
+#ifdef _ARM
 void uart_init() { 
   init(); 
   int rate = 115200;
@@ -79,3 +84,4 @@ float * get_uart()
     sscanf(dat, "%f\t%f\t%f", p, p + 1, p + 2);
   return p;
 }
+#endif
