@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 extern "C"
 {
   #include "opt.h"
@@ -8,40 +9,38 @@ extern "C"
 
 struct options opt;
 
-static void show_usage();
+extern char g_OutPutInfo[100];
+extern char g_YUVFile[100];
 
-static void
-show_usage()
-{
-  printf("usage: swc [options]\n\
--h 打印该帮助信息\n\
--v 显示程序内部提示\n");
-}
-
-void
-options_init()
+extern char is_IP;
+void options_init()
 {
   opt.verbose = 0;
   opt.width = 176;
   opt.height = 144;
 }
 
-void
-options_deal(int argc, char *argv[])
+void options_deal(int argc, char *argv[])
 {
   int my_opt;
-
-  while ((my_opt = getopt(argc, argv, "hv")) != -1) {
-    switch(my_opt) {
-    case 'h':
-      show_usage();
+  while ((my_opt = getopt(argc, argv, "r:is:")) != -1) 
+  {
+    switch(my_opt) 
+    {
+    case 'r':
+      memcpy(g_OutPutInfo, optarg,strlen(optarg));
+      printf("Output Information File:%s\n", g_OutPutInfo);
       break;
-    case 'v':
-      opt.verbose = 1;
+    case 'i':
+      printf("Just use I frame\n");
+      is_IP = 0;
+      break;
+    case 's':
+      memcpy(g_YUVFile, optarg,strlen(optarg));
+      printf("Input Sequence File:%s\n", g_YUVFile);
       break;
     default:
-      show_usage();
-      exit(EXIT_FAILURE);
+      break;
     }
   }
 }

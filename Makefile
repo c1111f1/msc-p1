@@ -58,7 +58,7 @@ all: $(BIN_PATH)$(EXN)
 $(BIN_PATH)$(EXN): $(SWCOBJECT)
 	$(CC) $(LDFLAGS) $(SWCOBJECT) -o $@ $(LIBS) $(DEP_LIBS)
 ifeq ($(PLATFORM),ARM)
-	scp bin/$(EXN) ubuntu@192.168.1.106:~/ht_ard2
+	scp bin/$(EXN) ubuntu@192.168.1.106:~/ht_ardT
 endif
 	
 $(OBJ_PATH)swc.o: $(SRC_PATH)swc.c $(SRC_PATH)x264.h

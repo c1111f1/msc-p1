@@ -1,6 +1,7 @@
 #ifndef OPT_H
 #define OPT_H
 
+//#define _RealTime
 
 struct options {
   int verbose;

@@ -22,29 +22,40 @@ extern int frame_num;
 extern int RTP_init();
 extern int RTP_send(unsigned char * sdat, int ndat);
 extern int RTP_end();
-
+extern void RTP_Test();
 #ifdef _ARM
 void uart_init();
 float * get_uart();
 #endif
 
-int
-main(int argc, char *argv[])
+extern char g_OutPutInfo[100];
+extern FILE *OUTPUT_FP;
+
+int main(int argc, char *argv[])
 {
+  options_init();
+  options_deal(argc, argv);
 #ifdef _ARM
   uart_init();
   get_uart();
 #endif
   RTP_init();
-  options_init();
-  options_deal(argc, argv);
+  //getchar();
+  OUTPUT_FP = fopen(g_OutPutInfo, "w");
+
+  RTP_Test();
+
+#ifdef _RealTime
   video_init();
+#endif
   X264_init();
   //printf("Begin\n");
   screen_mainloop();
   //printf("%d Exit\n",frame_num);
   X264_end();
+#ifdef _RealTime
   video_quit();
+#endif
   RTP_end();
   exit(EXIT_SUCCESS);
 }
@@ -60,6 +71,7 @@ void uart_init() {
 
 int thisByte = 33; 
 
+float x[3];
 float * get_uart()
 {
     char dat[100];
@@ -77,7 +89,7 @@ float * get_uart()
       {
         thisByte = Serial.read();
         dat[dat_i++] = thisByte;
-        //printf("%c", thisByte);
+        printf("%c", thisByte);
       }
       if (serialEventRun) serialEventRun();
     } while (thisByte != 10);

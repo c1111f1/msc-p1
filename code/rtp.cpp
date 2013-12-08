@@ -56,7 +56,8 @@ int RTP_init()
 	std::string ipstr;
 	int status,i,num;
 	printf("Use default IP and port? (192.168.1.100:4444)\n");
-	if_default = getchar();
+	if_default = 'y';//getchar();
+
 	if (if_default == 'y')
 	{
 		portbase=4444;
@@ -101,12 +102,14 @@ int RTP_init()
 	//            RTCP Sender Report info will be calculated wrong
 	// In this case, we'll be sending 10 samples each second, so we'll
 	// put the timestamp unit to (1.0/10.0)
-	sessparams.SetOwnTimestampUnit(1.0/10.0);		
+	sessparams.SetOwnTimestampUnit(1.0/25.0);		
 	
 	sessparams.SetAcceptOwnPackets(true);
 	transparams.SetPortbase(portbase);
 	status = sess.Create(sessparams,&transparams);	
 	sess.SetMaximumPacketSize(20480);
+	sessparams.SetMaximumPacketSize(20480);
+	printf("%d",sessparams.GetMaximumPacketSize());
 	checkerror(status);
 	
 	RTPIPv4Address addr(destip,destport);
@@ -124,6 +127,7 @@ int RTP_send(char * sdat, int ndat)
 	checkerror(status);
 
 #ifndef RTP_SUPPORT_THREAD
+	printf("fuck\n");
 		status = sess.Poll();
 		checkerror(status);
 #endif // RTP_SUPPORT_THREAD
